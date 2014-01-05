@@ -29,7 +29,7 @@ try {
     $changeFiles = array();
     foreach ($revisions as $value) {
         $outputs = array();
-        exec("svn log --verbose -r {$value} | grep /src",$outputs);
+        exec("svn log --verbose -r {$value} | grep /",$outputs);
         $changeFiles = array_merge($changeFiles,$outputs);
     }
     echo2('------------------------------------------------------------------------');
