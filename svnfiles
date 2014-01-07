@@ -9,20 +9,21 @@ include 'functions.php';
 if(isset($argv[1]) && ($argv[1] == '--help' || $argv[1] == '--h')) {
     echo PHP_EOL;
     echo2('Description : view files change in revisions');
-    echo2('Usage : php ~/tools/svnfiles.php [OPTIONS]');
+    echo2('Usage : php ~/tools/svnfiles [OPTIONS]');
     echo2('Examples :');
-    echo2('   svnfiles.php  -> HEAD revision');
-    echo2('   svnfiles.php 15451,15453,15455');
+    echo2('   svnfiles  -> HEAD revision');
+    echo2('   svnfiles --r 15451,15453,15455');
     echo PHP_EOL;
     exit;
 }
 try {
     $chdir = getcwd();
     chdir($chdir);
-    if(!isset($argv[1]) || empty($argv[1])) {
+    $args = parseArgs($argv);
+    if(!isset($args['r']) || empty($args['r'])) {
         $str_revision = 'HEAD';
     } else {
-        $str_revision = $argv[1];
+        $str_revision = $args['r'];
     }
     echo2('Revisions : '.$str_revision);
     $revisions = split(',', $str_revision);
