@@ -1,4 +1,7 @@
 <?php
+date_default_timezone_set('Asia/Bangkok');
+set_include_path('/home/localadm/tools/libs');
+define('DATE_YYYY_MM_DD', 'y-MM-dd');
 function debug($data,$exit = true) {
     print_r($data);
     if($exit) {
@@ -33,15 +36,22 @@ function getPart($string,$pattern = ',',$index = 0) {
 
 function parseArgs($argv) {
     $params = array();
-    foreach ($argv as $index => $value) {
-        if($index > 0) {
-            $arr = split('=', $value);
-            if(count($arr) == 2) {
-                $params[$arr[0]] = $arr[1];
-            }
+    $cur = '';
+    foreach ($argv as $value) {
+        if(stripos($value, '-') === 0) {
+            $cur = str_replace('-', '', $value);
+        } elseif(!empty($cur)) {
+            $params[$cur] = trim($value);
         }
     }
     return $params;
+}
+function getDir($fielPath) {
+    $pos = strrpos($fielPath, '/');
+    if($pos !== false) {
+        return substr($fielPath, 0, $pos);
+    }
+    return '';
 }
 
 class Core_Number

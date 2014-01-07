@@ -8,15 +8,16 @@ include 'functions.php';
  */
 if(isset($argv[1]) && ($argv[1] == '--help' || $argv[1] == '--h')) {
     echo PHP_EOL;
-    echo2('Description : export files change in revisions');
-    echo2('Usage : php ~/tools/svnexport [OPTIONS]');
+    echo2('Description : deploy files change in revisions');
+    echo2('Usage : php ~/tools/svndeploy [OPTIONS]');
     echo2('Examples :');
-    echo2('   svnexport  -> HEAD revision');
-    echo2('   svnexport --r 15451,15453,15455');
+    echo2('   svndeploy d=~/VNG/SandBox/sandbox  -> HEAD revision');
+    echo2('   svndeploy 15451,15453,15455 d=~/VNG/SandBox/sandbox');
     echo PHP_EOL;
     exit;
 }
 try {
+    $args = parseArgs($argv);
     $output = array();
     exec("svn info",$output);
     $workingPath = '';
@@ -35,7 +36,15 @@ try {
     if(empty($workingPath) || empty($URL) || $HEAD == 0) {
         throw new Exception('Invalid repository');
     }
+    $dest = safe_get($args, 'd');
+    if(empty($dest) || !is_dir($dest)) {
+        throw new Exception('Invalid destination deploy space!');
+    }
+    if(strrpos($dest, '/') < strlen($dest) - 1) {
+        $dest.='/';
+    }
     $deployFolder = '/home/localadm/deploys/new/';
+    $backupFolder = '/home/localadm/deploys/backups/';
     $folders = array(
         'application/',
         'library/',
@@ -45,7 +54,6 @@ try {
         'public_html_vip123pay'
     );
     chdir($workingPath);
-    $args = parseArgs($argv);
     if(!isset($args['r']) || empty($args['r'])) {
         $str_revision = 'HEAD';
     } else {
@@ -80,18 +88,31 @@ try {
             
         }
     }
-    exec("rm -rvf {$deployFolder}*");
-    echo PHP_EOL;
-    foreach ($changeFiles as $file => $revision) {
-        $svnPath = $URL.'/'.$file;
-        echo2('Exporting file '.$svnPath.':'.$revision.'...');
-        $fileDir = getDir($file);
-        if(empty($fileDir)) {
-            throw new Exception('Empty dir of file '.$file);
+    if(!empty($changeFiles)) {
+        //create backup files
+        include_once 'Zend/Date.php';
+        $date = new Zend_Date();
+        $backupFolder = $backupFolder.$date->toString('yMMddHHmmss').'/';
+        exec("mkdir {$backupFolder}");
+        exec("rm -rvf {$backupFolder}*");
+        $output = array();
+        exec("svn update ".$dest,$output);
+        if(!isset($output[0]) || stripos($output[0], 'Updating') === false) {
+            throw new Exception('Destination folder is not subversion folder!');
         }
-        $fileDir = $deployFolder.$fileDir;
-        exec("mkdir -p ".$fileDir);
-        exec("svn export -r {$revision} {$svnPath} {$fileDir}");
+        echo PHP_EOL;
+        chdir($dest);
+        foreach ($changeFiles as $file => $revision) {
+            exec("cp --parent {$file} {$backupFolder}");
+            $svnPath = $URL.'/'.$file;
+            echo2('Deploying file '.$svnPath.':'.$revision.'...');
+            $file = $dest.$file;
+            $fileDir = getDir($file);
+            if(empty($fileDir)) {
+                throw new Exception('Empty dir of file '.$file);
+            }
+            exec("svn export --force -r {$revision} {$svnPath} {$fileDir}");
+        }
     }
     echo PHP_EOL;
     echo 'Done'.PHP_EOL;
