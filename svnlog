@@ -30,7 +30,7 @@ try {
         $grep = 'longnc';
     }
     if(empty($to)) {
-        $to = $current->toString(DATE_YYYY_MM_DD);
+        $to = $current->addDate(1)->toString(DATE_YYYY_MM_DD);
     }
     if(empty($from)) {
         $from = $current->subDay(7)->toString(DATE_YYYY_MM_DD);
