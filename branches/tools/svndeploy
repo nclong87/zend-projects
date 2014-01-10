@@ -90,10 +90,10 @@ try {
     }
     if(!empty($changeFiles)) {
         //create backup files
-        include_once 'Zend/Date.php';
-        $date = new Zend_Date();
-        $backupFolder = $backupFolder.$date->toString('yMMddHHmmss').'/';
-        exec("mkdir {$backupFolder}");
+        //include_once 'Zend/Date.php';
+       // $date = new Zend_Date();
+       // $backupFolder = $backupFolder.$date->toString('yMMddHHmmss').'/';
+        //exec("mkdir {$backupFolder}");
         exec("rm -rvf {$backupFolder}*");
         $output = array();
         exec("svn update ".$dest,$output);
