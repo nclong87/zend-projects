@@ -30,71 +30,24 @@ function getAvailabeRange($userPoint,$totalPoint) {
     return $result;
 }
 try  {
-    die(md5('113902918621242014012100759'));
-    $key = '123PLUS@SecretKey';
-    $transId = '1242014012100929';
-    $time= '1390290996';
-    $status = '1';
-    debug(md5($status. $time .$transId . $key));
-    $point = 6400;
-    debug($point - ($point%10000));
-    debug(time());
-    $url = 'https://plus.123pay.vn/news/newsdetail.77.123pay_hop_tac_cung_galaxy_mua_ve_online_that_de_dang.html?utm_source=PlusPay&utm_medium=BannerTop&utm_campaign=&block=PLUSxTOP&adv_type=banner';
-    $arr = parse_url($url);
-    debug($arr);
-    $testcases = array(
-        array(39000,40000,0,0),
-        array(39000,49000,0,0),
-        array(39000,50000,0,0),
-        array(39000,60000,0,0),
-        array(39000,79000,0,0),
-        array(39000,80000,0,0),
-        array(39000,90000,0,0),
-        
-        array(40000,40000,40000,40000),
-        array(49000,49000,49000,49000),
-        array(50000,50000,50000,50000),
-        array(60000,60000,60000,60000),
-        array(78000,79000,0,0),
-        array(79000,80000,50000,60000),
-        array(80000,90000,50000,70000),
-        
-        array(50000,40000,40000,40000),
-        array(59000,49000,49000,49000),
-        array(60000,50000,50000,50000),
-        array(70000,60000,60000,60000),
-        array(89000,79000,50000,59000),
-        array(90000,80000,50000,60000),
-        array(91000,90000,50000,70000),
-        
-        array(80000,100000,50000,80000),
-    );
-    foreach ($testcases as $index => $value) {
-        $userPoint = $value[0];
-        $totalPoint = $value[1];
-        $availabeRange = getAvailabeRange($userPoint, $totalPoint);
-        $result = 'Fail';
-        if($availabeRange[0] == $value[2] && $availabeRange[1] == $value[3]) {
-            $result = 'Pass';
-        }
-        echo2('Test case '.($index + 1).' : '.$result);
-//        print_r(array(
-//            'userPoint' => $userPoint,
-//            'totalPoint' => $totalPoint,
-//            'min' => $availabeRange[0],
-//            'max' => $availabeRange[1],
-//            'result' => $result
-//            
-//        ));
-//        echo PHP_EOL;
+    $string = '197553,197556,197557,197560,197567,197568,197571,197573,197574,197575,197576,197577,197580,197581,197584,197585,197589,197591,197593,197594,197598,197599,197600';
+    $array = explode(',', $string);
+    var_dump($array);die;
+    require_once 'Zend/Date.php';
+    $now = new Zend_Date();
+    $date = new Zend_Date('2014-02-28','y-MM-dd');
+    if($date->isLater($now,'MM') ) {
+        echo 'Later';
+    } else {
+        echo 'Earlier';
     }
     die;
-    $userPoint = 39000;
-    $totalPoint = 40000;
-    debug(getAvailabeRange($userPoint, $totalPoint));
-    $i = 54000;
-    debug(intval($i/10000));
-    require_once 'Zend/Date.php';
+    require_once 'Zend/Validate/Date.php';
+    $validator = new Zend_Validate_Date('dd/MM/yy');
+    $retval = $validator->isValid('30/11/1');
+    
+    echo '$retval='.$retval;
+    die;
     $date = new Zend_Date();
     debug($date->toString('y-M-d'));
     $date = date('Y-m-d H:s');
