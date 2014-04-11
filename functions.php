@@ -157,3 +157,7 @@ class Core_Number
 		return $str;
 	}
 }
+
+function getParam($param,$default = '') {
+    return isset($_REQUEST[$param])?$_REQUEST[$param]:$default;
+}
