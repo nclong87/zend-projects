@@ -1,8 +1,12 @@
 <?php
 function isValidAlphabet($string) {
+    if(empty($string)) {
+        return true;
+    }
+    $length = strlen($string);
     $array = array('1','2','3','4','5','6','7','8','9','0','q','w','e','r','t','y','u','i','o','p','a','s','d','f','g','h','j','k','l','z','x','c','v','b','n','m');
     $i = 0;
-    while (true) {
+    while ($i < $length) {
         if($i > 100) {
             break;
         }
@@ -18,6 +22,6 @@ function isValidAlphabet($string) {
     return true;
 }
 
-$otp = '100A96914';
+$otp = '11234$3908';
 $retval = isValidAlphabet($otp);
 var_dump($retval);
