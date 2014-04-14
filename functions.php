@@ -57,7 +57,7 @@ function getDir($fielPath) {
     return '';
 }
 
-function getDB() {
+function getDB() { 
     $options_storage = array(
         'adapter' => 'pdo_mysql',
         'params' => array(
