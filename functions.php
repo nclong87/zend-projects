@@ -52,7 +52,7 @@ function parseArgs($argv) {
 function getDir($fielPath) {
     $pos = strrpos($fielPath, '/');
     if($pos !== false) {
-        return substr($fielPath, 0, $pos);
+        return substr($fielPath, 0, $pos); 
     }
     return '';
 }
