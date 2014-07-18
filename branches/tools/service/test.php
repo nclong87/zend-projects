@@ -2,14 +2,17 @@
 echo '<pre>';
 $secretKey = '123456789'; //key only for test
 $apiUrl = 'https://api.myplus.vn/request/csm-add-plus';
-$apiUrl = 'http://local-api.myplus.vn/request/csm-add-plus';
+//$apiUrl = 'http://local-api.myplus.vn/request/csm-add-plus';
 $file_detail = '/home/localadm/tools/data/csm_add_plus_201407.xlsx';
+//$file_detail = '/home/localadm/tools/data/abcd.xlsx';
+$data = file_get_contents($file_detail);
+$data = base64_encode($data);
 $post_data = array(
     'partner' => 'CSMADDPLUS',
-    'fa_request_code' => 'FA-99399393933',
+    'fa_request_code' => 'FA-99399393937',
     'request_name' => 'Cộng điểm cho chủ phòng máy tháng 07/2014',
-    'file_detail' => '@'.$file_detail,
-    'budget' => '1900000',
+    'file_detail' => $data,
+    'budget' => '150000',
     'time_request' => '2014-07-15 10:30:00',
     'user_request' => 'sint',
     'request_info' => '{"request_type":"AAA","team":"CSM"}'
@@ -18,6 +21,7 @@ $post_data['checksum'] = sha1($post_data['partner'] . $post_data['fa_request_cod
 $curl = curl_init();
 curl_setopt($curl, CURLOPT_POST, 1);
 $post_items = array();
+curl_setopt($curl, CURLOPT_TIMEOUT, 120);
 curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
 curl_setopt($curl, CURLOPT_POSTFIELDS, $post_data);
 curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
@@ -27,6 +31,6 @@ $result = curl_exec($curl);
 if ($result == null || empty($result)) {
     return null;
 }
-print_r($result);die;
+//print_r($result);die;
 $result = json_decode($result, true);
 print_r($result);
