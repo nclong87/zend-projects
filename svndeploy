@@ -99,6 +99,10 @@ try {
         exec("svn update ".$dest,$output);
         if(!isset($output[0]) || stripos($output[0], 'Updating') === false) {
             throw new Exception('Destination folder is not subversion folder!');
+        } else {
+            foreach ($output as $value) {
+                echo2($value);
+            }
         }
         echo PHP_EOL;
         chdir($dest);
