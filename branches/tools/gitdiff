@@ -1,0 +1,110 @@
+
+<?php
+include 'functions.php';
+/* 
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ * svn log -r {2013-12-20}:{2014-12-01} | grep -B2 longnc
+ * svn log -r 15451 --verbose 
+ */
+if(isset($argv[1]) && ($argv[1] == '--help' || $argv[1] == '--h')) {
+    echo PHP_EOL;
+    echo2('Description : view diffs from this branch to others');
+    echo2('Usage : php ~/tools/gitdiff [OPTIONS]');
+    echo2('Examples :');
+    echo2('   gitdiff -b=<default is master> -export=<path>');
+    echo2('   gitdiff -b=branch1 -export');
+    echo PHP_EOL;
+    exit;
+}
+try {
+    require_once 'Zend/Date.php';
+    $current = new Zend_Date();
+    $args = parseArgs($argv);
+    $workingDir = getcwd();
+    $productionDir = $args['p_dir'];
+    if(empty($productionDir)) {
+        throw new Exception('Empty p_dir!');
+    }
+    echo2('Change dir to '.$productionDir);
+    chdir($productionDir);
+    doCmd('git pull',true);
+    $output = doCmd('git rev-parse --abbrev-ref HEAD');
+    $branch = $output[0];
+    chdir($workingDir);
+    $cmd = "git diff {$branch} --name-only";
+    $outputs = doCmd($cmd);
+    $tmpPath = '/tmp/git/';
+    if(is_dir($tmpPath)) {
+        exec('mkdir -p '.$tmpPath);
+    } 
+    exec('rm -rvf '.$tmpPath.'*');
+    foreach ($outputs as $value) {
+        $pathCopy = getDir($tmpPath.$value);
+        exec('test -d "'.$pathCopy.'" || mkdir -p "'.$pathCopy.'" && cp '.$value.' "'.$tmpPath.$value.'"');
+    }
+    
+    if(isset($args['export'])) {
+        echo2('Action: Export diffs to '.$productionDir);
+        doCmd("cp -rvf {$tmpPath}* {$productionDir}" ,true);
+    } else {
+        echo2('Action: View diffs');
+        doCmd("bcompare {$tmpPath} $productionDir",true);
+    }
+
+die;
+    $chdir = getcwd();
+    chdir($chdir);
+    $grep = safe_get($args, 'grep');
+    $from = safe_get($args, 'from');
+    $to = safe_get($args, 'to');
+    if(empty($grep)) {
+        $grep = 'longnc';
+    }
+    if(empty($to)) {
+        $to = $current->addDate(1)->toString(DATE_YYYY_MM_DD);
+    }
+    if(empty($from)) {
+        $from = $current->subDay(7)->toString(DATE_YYYY_MM_DD);
+    }
+    $exec = "svn log -r {{$to}}:{{$from}} | grep -B3 ".$grep;
+    echo2($exec);
+    $outputs = array();
+    exec($exec,$outputs);
+    $revisions = array();
+    $limit = safe_get($args, 'limit', 5);
+    foreach ($outputs as $key => $value) {
+        $revision = getPart($value, '|', 0);
+        if(!empty($revision)) {
+            $revisions[] = Core_Number::parseNumber($revision);
+        }
+        if(count($revisions) >= $limit) {
+            break;
+        }
+    }
+    echo2('Revisions : '.join(',', $revisions));
+    foreach ($revisions as $revision) {
+        echo PHP_EOL;
+        $outputs = array();
+        exec("svn log -r {$revision} --verbose",$outputs);
+        if(!empty($outputs)) {
+            unset($outputs[count($outputs) - 1]);
+            echo join(PHP_EOL, $outputs);
+        }
+        
+        echo PHP_EOL;
+    }
+    echo PHP_EOL;
+    echo PHP_EOL;
+    echo PHP_EOL;
+    echo2('------------------------------------------------------------------------');
+    echo2('Revisions : '.join(',', $revisions));
+    echo 'Done'.PHP_EOL;
+} catch (Exception $exc) {
+    echo2('Error : '.$exc->getMessage());
+    //echo $exc->getTraceAsString();
+}
+
+
+

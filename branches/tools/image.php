@@ -4,7 +4,7 @@ function drawUserInfo($param) {
     $colorBg = '#ffffff';
     $colorText = '#656469';
     $width = 10 + strlen($point) * 11;
-    $im = imagecreate($width + 20, 20);
+    $im = imagecreate($width + 20, 19);
     $red = hexdec(substr($colorBg, 1 , 2));
     $green = hexdec(substr($colorBg, 3 , 2));
     $blue = hexdec(substr($colorBg, 5 , 2));
@@ -18,7 +18,7 @@ function drawUserInfo($param) {
     imagecolortransparent($im, $white);
     $dest = imagecreatefrompng('font/plus.png');
     imagecopy($im,$dest,$width, -2, 0, 0, 20, 20);
-    imagettftext($im, 11, 0, 5, 16, $black, "font/tahoma.ttf", number_format($point));
+    imagettftext($im, 10, 0, 5, 15, $black, "font/tahoma.ttf", number_format($point));
     imagepng($im);
     imagedestroy($im);
 }

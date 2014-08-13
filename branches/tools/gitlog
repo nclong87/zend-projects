@@ -1,0 +1,37 @@
+<?php
+include 'functions.php';
+/* 
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ * svn log -r {2013-12-20}:{2014-12-01} | grep -B2 longnc
+ * svn log -r 15451 --verbose 
+ */
+if(isset($argv[1]) && ($argv[1] == '--help' || $argv[1] == '--h')) {
+    echo PHP_EOL;
+    echo2('Description : view log');
+    echo2('Usage : php ~/tools/gitlog [OPTIONS]');
+    echo2('Examples :');
+    echo2('   gitlog');
+    echo PHP_EOL;
+    exit;
+}
+try {
+    require_once 'Zend/Date.php';
+    $current = new Zend_Date();
+    $args = parseArgs($argv);
+    $maxCount = isset($args['limit'])?$args['limit']:10;
+    $cmd = "git log --oneline --max-count=".$maxCount;
+    echo2('Command: '.$cmd);
+    exec($cmd,$outputs);
+    echo2('Action: View logs');
+    foreach ($outputs as $value) {
+        echo2('   '.$value);
+    }
+} catch (Exception $exc) {
+    echo2('Error : '.$exc->getMessage());
+    //echo $exc->getTraceAsString();
+}
+
+
+
