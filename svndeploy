@@ -106,11 +106,23 @@ try {
         }
         echo PHP_EOL;
         chdir($dest);
+        $folders = getFolders($dest);
+        $lastFolderInDest = $folders[0];
         foreach ($changeFiles as $file => $revision) {
-            exec("cp --parent {$file} {$backupFolder}");
+            //exec("cp --parent {$file} {$backupFolder}");
             $svnPath = $URL.'/'.$file;
             echo2('Deploying file '.$svnPath.':'.$revision.'...');
-            $file = $dest.$file;
+            $tmpPath = array();
+            $folders = getFolders($file);
+            foreach ($folders as $value) {
+                if($value == $lastFolderInDest) {
+                    break;
+                }
+                $tmpPath[] = $value;
+            }
+            $tmpPath = array_reverse($tmpPath);
+            $tmpPath = join('/',$tmpPath);
+            $file = $dest.$tmpPath;
             $fileDir = getDir($file);
             if(empty($fileDir)) {
                 throw new Exception('Empty dir of file '.$file);

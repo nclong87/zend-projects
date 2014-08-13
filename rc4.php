@@ -31,7 +31,7 @@ function rc4_encrypt($data,$key) {
     return urlencode(base64_encode($cipher));
 }
 
-$test = 'pluskt01';
+$test = '1';
 $key = '123456';
 echo '<pre>';
 echo 'Data : '.$test.'<br>';

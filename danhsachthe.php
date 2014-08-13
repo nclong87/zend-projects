@@ -7,6 +7,9 @@ $sql = 'SELECT * FROM thecao where 1 = 1 ';
 $params = array();
 foreach ($_GET as $key => $value) {
     if(!empty($value)) {
+        if($key == 'mathe') {
+            $value = $value.'*';
+        }
         $value = str_replace('*', '%', $value);
         if (strpos($value,'%') !== false) {
             $sql .= " and $key like :$key ";
@@ -63,10 +66,10 @@ border: 1px solid black;
                         Id
                     </th>
                     <th>
-                        Serial
+                        Ma The
                     </th>
                     <th>
-                        Ma The
+                        Serial
                     </th>
                     <th>
                         Mang
@@ -97,8 +100,8 @@ border: 1px solid black;
                 ?>
                 <tr>
                     <td align="center" width="30px"><?php echo $row['id']?></td>
-                    <td style="padding: 10px"><?php echo $row['serial']?></td>
                     <td style="padding: 10px"><?php echo $row['mathe']?></td>
+                    <td style="padding: 10px"><?php echo $row['serial']?></td>
                     <td style="padding: 10px"><?php echo $row['mang']?></td>
                     <td style="padding: 10px"><?php echo $row['hsd']?></td>
                     <td style="padding: 10px"><?php echo $row['loaithe']?></td>
