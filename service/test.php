@@ -2,22 +2,29 @@
 echo '<pre>';
 $secretKey = '123456789'; //key only for test
 $apiUrl = 'https://api.myplus.vn/request/csm-add-plus';
-//$apiUrl = 'http://local-api.myplus.vn/request/csm-add-plus';
-$file_detail = '/home/localadm/tools/data/csm_add_plus_201407.xlsx';
+//$apiUrl = 'http://dev.api.myplus.vn/request/csm-add-plus';
+$file_detail = '/home/localadm/tools/data/csm_add_plus.xlsx';
+$file_detail = '/home/localadm/tools/data/csm_add_plus123.xlsx';
+
+//$file_detail = '/home/localadm/csm_add_plus.xlsx';
 //$file_detail = '/home/localadm/tools/data/abcd.xlsx';
+$checksum_file = md5_file($file_detail);
 $data = file_get_contents($file_detail);
 $data = base64_encode($data);
 $post_data = array(
-    'partner' => 'CSMADDPLUS',
-    'fa_request_code' => 'FA-99399393937',
+    'partner' => 'CMSPHONGMAY',
+    'fa_request_code' => 'FA-99399393985',
     'request_name' => 'Cộng điểm cho chủ phòng máy tháng 07/2014',
     'file_detail' => $data,
-    'budget' => '150000',
+    'checksum_file' => $checksum_file,
+    //'budget' => '1894630000',
+    'budget' => '2000940000',
+    //'budget' => '15200000',
     'time_request' => '2014-07-15 10:30:00',
     'user_request' => 'sint',
-    'request_info' => '{"request_type":"AAA","team":"CSM"}'
+    'request_info' => '{"ReferenceNo":"123456","EventCode":"ABCD"}'
 );
-$post_data['checksum'] = sha1($post_data['partner'] . $post_data['fa_request_code'] . $post_data['budget'] . $post_data['user_request'] . $secretKey);
+$post_data['checksum'] = sha1($post_data['partner'] . $post_data['fa_request_code'] . $post_data['checksum_file'] . $post_data['budget'] . $post_data['user_request'] . $secretKey);
 $curl = curl_init();
 curl_setopt($curl, CURLOPT_POST, 1);
 $post_items = array();

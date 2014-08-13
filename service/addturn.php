@@ -2,18 +2,18 @@
 echo '<pre>';
 error_reporting(0);
 $secretKey = '123456';
-$apiUrl = 'http://local-api.myplus.vn/quayso/addturn';
-$secretKey = 'TQrWsrBK1wk8sG4H';
-$apiUrl = 'https://api.myplus.vn/quayso/addturn';
+$apiUrl = 'http://local.api.myplus.vn/quayso/addturn';
 $transaction = 'TEST'.date('YmdHis').rand(0, 1000);
-$transaction = 'CSM20140708020337293';
+//$secretKey = 'TQrWsrBK1wk8sG4H';
+//$apiUrl = 'https://api.myplus.vn/quayso/addturn';
+//$transaction = 'CSM20140708020337293';
 $post_data = array(
     'partner' => 'CSM',
     'campaign' => '3',
-    'account_id' => 'netanhthyquan10',
+    'account_id' => 'pluskt05',
     'transaction' => $transaction,
     'note' => 'han so lan quay so tu CSM',
-    'client_ip' => '27.3.2.199'
+    'client_ip' => '127.0.0.1'
 );
 $post_data['checksum'] = sha1($post_data['partner'] . $post_data['campaign'] . $post_data['account_id'] . $post_data['transaction'] . $post_data['note'] . $post_data['client_ip'] . $secretKey);
 $curl = curl_init();
