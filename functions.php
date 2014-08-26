@@ -4,9 +4,7 @@ define('DATE_YYYY_MM_DD', 'y-MM-dd');
 define('DS', DIRECTORY_SEPARATOR);
 define('PS', PATH_SEPARATOR);
 define('ROOT_DIR', dirname(__FILE__));
-define('LIB_DIR', ROOT_DIR.'/libs');
-set_include_path(LIB_DIR);
-include LIB_DIR.'/Core/Log.php';
+set_include_path(ROOT_DIR.'/libs');
 function debug($data,$exit = true) {
     print_r($data);
     if($exit) {
@@ -17,11 +15,8 @@ function debug($data,$exit = true) {
  * @desc Echo and break line in console
  * @param type $string
  */
-function echo2($string,$exit = false) {
+function echo2($string) {
     echo $string.PHP_EOL;
-    if($exit) {
-        die;
-    }
 }
 
 function safe_get($array,$element,$defaule='') {
@@ -47,41 +42,10 @@ function parseArgs($argv) {
     $cur = '';
     foreach ($argv as $value) {
         if(stripos($value, '-') === 0) {
-            $value = trim(str_replace('-', '', $value));
-            if(strpos($value, '=') !== false) {
-                $tmp = explode('=', $value);
-                $key = $tmp[0];
-                $params[$key] = '';
-                if(isset($tmp[1])) {
-                    $params[$key] = $tmp[1];
-                } 
-            } else {
-                $cur = $value;
-                $params[$cur] = '';
-            }
+            $cur = str_replace('-', '', $value);
         } elseif(!empty($cur)) {
             $params[$cur] = trim($value);
-            $cur = '';
         }
-    }
-    return $params;
-}
-function parseArgs2($argv) {
-    $params = array();
-    foreach ($argv as $value) {
-        if(stripos($value, '-') === 0) {
-            $value = str_replace('-', '', $value);
-            if(strpos($value, '=') !== false) {
-                $tmp = explode('=', $value);
-                $key = $tmp[0];
-                $params[$key] = '';
-                if(isset($tmp[1])) {
-                    $params[$key] = $tmp[1];
-                } 
-            } else {
-                $params[$value] = '';
-            }
-        } 
     }
     return $params;
 }
@@ -198,25 +162,12 @@ function getParam($param,$default = '') {
     return isset($_REQUEST[$param])?$_REQUEST[$param]:$default;
 }
 
-function doCmd($command,$print = false) {
-    echo2('Command: '.$command);
-    $output = array();
-    exec($command,$output);
-    if($print) {
-        foreach ($output as $value) {
-            echo2('   '.$value);
-        }
-    }
-    return $output;
-}
-
-function getFolders($path) {
-    $ret = split('/', $path);
-    $result = array();
-    foreach ($ret as $value) {
-        if(!empty($value)) {
-            $result[] = $value;
-        }
-    }
-    return array_reverse($result);
+function getContentByURL($url) {
+	$curl = curl_init();
+	curl_setopt($curl, CURLOPT_URL, $url);
+	curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($curl, CURLOPT_HEADER, false);
+	$response = curl_exec($curl);
+	curl_close($curl);
+	return $response;
 }
