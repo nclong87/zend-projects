@@ -171,3 +171,26 @@ function getContentByURL($url) {
 	curl_close($curl);
 	return $response;
 }
+
+function doCmd($command,$print = false) {
+    echo2('Command: '.$command);
+    $output = array();
+    exec($command,$output);
+    if($print) {
+        foreach ($output as $value) {
+            echo2('   '.$value);
+        }
+    }
+    return $output;
+}
+
+function getFolders($path) {
+    $ret = split('/', $path);
+    $result = array();
+    foreach ($ret as $value) {
+        if(!empty($value)) {
+            $result[] = $value;
+        }
+    }
+    return array_reverse($result);
+}
