@@ -246,3 +246,22 @@ function is_connected() {
     }
     return $is_conn;
 }
+function img_path($file,$upload_dir = '') {
+    if (preg_match('/^([0-9]+)\_/', $file, $matches)) {
+        $time = (int) $matches[1];
+
+        $param = array();
+        $param[] = $upload_dir;
+        $param[] = date('d', $time);
+        $param[] = date('m', $time);
+        $param[] = date('Y', $time);
+
+        if (!empty($thum)) {
+            $param[] = $thum;
+        }
+
+        $param[] = $file;
+        return join('/', $param);
+    }
+    return NULL;
+}

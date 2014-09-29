@@ -15,6 +15,10 @@ require 'defined.php';
 require 'functions.php';
 $testDb = Db\Test::getInstance();
 $data = $testDb->query();
-debug($data);
+
+foreach ($data as $value) {
+    $array = array('path_image' => img_path($value['image']));
+    print_r($array);
+}
 echo PHP_EOL;
 
