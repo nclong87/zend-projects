@@ -101,10 +101,7 @@ abstract class Base {
         $stmt->closeCursor();
     }
     
-    public function query($data,$isOne = false) {
-        if(empty($data)) {
-            return null;
-        }
+    public function query($data = array(),$isOne = false) {
         $where = ' 1 = 1 ';
         $params = array();
         foreach ($data as $key => $value) {
