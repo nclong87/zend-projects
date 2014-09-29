@@ -1,8 +1,8 @@
 <?php
 function drawUserInfo($param) {
     $point = $param['point'];
-    $colorBg = '#ffffff';
-    $colorText = '#656469';
+    $colorBg = '#FFA500';
+    $colorText = '#FFFFFF';
     $width = 10 + strlen($point) * 11;
     $im = imagecreate($width + 20, 19);
     $red = hexdec(substr($colorBg, 1 , 2));

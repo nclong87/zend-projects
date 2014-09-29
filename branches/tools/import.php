@@ -12,7 +12,8 @@ require_once ROOT_DIR.'/libs/Excel/excelMap.class.php';
 $file = 'D:\import.xlsx';
 $retval = readExcel($file, 'Sheet1');
 $db = getDB();
-$sql = 'INSERT INTO `zingid`(`zingid`) VALUES ';
+//$sql = 'INSERT INTO `zingid`(`zingid`) VALUES ';
+$sql = 'INSERT INTO `plus_tmp`(`pid`) VALUES ';
 //$sql = 'INSERT INTO `plus_product_discount`(`promotion_code`,`product_id`,`discount_type`,`discount_value`,`start_time`,`end_time`,`create_time`,`update_time`,`status`) VALUES (?,?,?,?,?,?,NOW(),NOW(),1)';
 $tmp = array();
 foreach ($retval as $data) {
