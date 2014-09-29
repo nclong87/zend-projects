@@ -1,27 +1,21 @@
 <?php
 echo '<pre>';
-$secretKey = '123456789'; //key only for test
-//$apiUrl = 'https://api.myplus.vn/request/csm-add-plus';
-$apiUrl = 'http://local.api.myplus.vn/request/csm-add-plus';
-$file_detail = '/home/localadm/Documents/test.xlsx';
+$secretKey = '123456'; //key only for test
+$apiUrl = 'https://api.myplus.vn/index/index';
+$file_detail = '/tmp/FA-PM140903045_csm_add_plus_fix.xlsx';
 
 //$file_detail = '/home/localadm/csm_add_plus.xlsx';
 //$file_detail = '/home/localadm/tools/data/abcd.xlsx';
 $checksum_file = md5_file($file_detail);
 $data = file_get_contents($file_detail);
 $data = base64_encode($data);
+
 $post_data = array(
-    'partner' => 'CMSPHONGMAY',
-    'fa_request_code' => 'fa-pm140915089',
-    'request_name' => 'FA - Payment Request',
+    'partner' => 'MYPLUS',
     'file_detail' => $data,
-    'checksum_file' => $checksum_file,
-    'budget' => '130569545',
-    'time_request' => '2014-09-03 14:47:03',
-    'user_request' => 'phuongnht',
-    'request_info' => '{"ReferenceNo":"FA-PA140701001","EventCode":"1407069-00"}'
+    'fa_request_code' => 'fa-pm140903045'
 );
-$post_data['checksum'] = sha1($post_data['partner'] . $post_data['fa_request_code'] . $post_data['checksum_file'] . $post_data['budget'] . $post_data['user_request'] . $secretKey);
+$post_data['checksum'] = sha1($post_data['partner'] . $secretKey);
 $curl = curl_init();
 curl_setopt($curl, CURLOPT_POST, 1);
 $post_items = array();
