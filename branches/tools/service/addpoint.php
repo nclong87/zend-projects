@@ -7,7 +7,7 @@ $post_data = array(
     'request_payment_code' => 'TEST123456',
     'merchant_transaction' => 'CSM_'.date('YmdHis').rand(1, 10000),
     'zingid' => 'pluskt02',
-    'point_add' => '40000',
+    'point_add' => '4000',
     'more_info' => '',
     'client_ip' => '127.0.0.1',
 );
