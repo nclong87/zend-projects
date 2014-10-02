@@ -3,7 +3,7 @@ echo '<pre>';
 $secretKey = '123456'; //key only for test
 $apiUrl = 'http://dev.api.myplus.vn/request/addpoint';
 $post_data = array(
-    'partner' => 'CSM',
+    'partner' => 'DS_CSM',
     'request_payment_code' => 'TEST123456',
     'merchant_transaction' => 'CSM_'.date('YmdHis').rand(1, 10000),
     'zingid' => 'pluskt02',
