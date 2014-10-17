@@ -6,20 +6,29 @@
  * and open the template in the editor.
  */
 include 'functions.php';
-include ROOT_DIR.'/libs/Zend/DB.php';
+include 'service/update.php';
+include ROOT_DIR.'/libs/Zend/Db.php';
 include ROOT_DIR.'/libs/Zend/Loader.php';
 $db = getDB();
-$sql = 'SELECT * FROM `zingid` WHERE `status` = 1 LIMIT 0,1';
+$sql = 'select * from myplus_topup where alo_order_id is null and test_status = 1 limit 0,30';
 $stmt = $db->prepare($sql);
 $stmt->execute();
 $rows = $stmt->fetchAll();
-$sql = 'UPDATE `zingid` SET `status` = 0 WHERE `id` = ?';
+$sql = 'update myplus_topup set test_status = 0, alo_order_id = :alo_order_id, order_status = :order_status where plus_invoice_no = :plus_invoice_no';
 $stmt = $db->prepare($sql);
-foreach($rows as $row) {
-	$url = 'https://admin.myplus.vn/test/update-csm?zid='.$row['zingid'];
-	echo2($url);
-	getContentByURL($url);
-	$stmt->execute(array($row['id']));
+foreach ($rows as $row) {
+    $response = queryByInvoiceNo($row['plus_invoice_no']);
+    $aloOrderNo = isset($response['order_no'])?$response['order_no']:'';
+    $orderStatus = isset($response['order_status_id'])?$response['order_status_id']:0;
+    if(!empty($aloOrderNo)) {
+        $updateData = array(
+            'alo_order_id' => $aloOrderNo,
+            'order_status' => $orderStatus,
+            'plus_invoice_no' => $row['plus_invoice_no']
+        );
+        echo2(json_encode($updateData));
+        $stmt->execute($updateData);
+        sleep(1);
+    }
 }
-$stmt->closeCursor();
 die;

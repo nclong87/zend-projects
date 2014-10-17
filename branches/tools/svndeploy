@@ -124,10 +124,11 @@ try {
             $tmpPath = join('/',$tmpPath);
             $file = $dest.$tmpPath;
             $fileDir = getDir($file);
-            if(empty($fileDir)) {
-                throw new Exception('Empty dir of file '.$file);
+            if(!is_dir($fileDir)) {
+                exec('mkdir '.$fileDir);
             }
-            exec("svn export --force -r {$revision} {$svnPath} {$fileDir}");
+            ///echo2("svn export --force -r {$revision} {$svnPath} {$file}");
+            exec("svn export --force -r {$revision} {$svnPath} {$file}");
         }
     }
     echo PHP_EOL;

@@ -29,7 +29,23 @@ try {
     }
     echo2('Change dir to '.$productionDir);
     chdir($productionDir);
-    doCmd('git pull',true);
+    $output = doCmd('git remote show');
+    if(!isset($output[0])) {
+        throw new Exception('Load remote info failed');
+    }
+    $output = doCmd('git remote show '.$output[0]);
+    $fetchUrl= '';
+    foreach ($output as $str) {
+        $pos = strpos($str, 'http');
+        if($pos > 0) {
+            $fetchUrl = substr($str, $pos);
+            break;
+        }
+    }
+    if(empty($fetchUrl)) {
+        throw new Exception('Load remote info failed');
+    }
+    doCmd('git pull '.$fetchUrl,true);
     $output = doCmd('git rev-parse --abbrev-ref HEAD');
     $branch = $output[0];
     chdir($workingDir);
@@ -37,12 +53,13 @@ try {
     $outputs = doCmd($cmd);
     $tmpPath = '/tmp/git/';
     if(is_dir($tmpPath)) {
-        exec('mkdir -p '.$tmpPath);
+        doCmd('mkdir -p '.$tmpPath);
     } 
-    exec('rm -rvf '.$tmpPath.'*');
+    doCmd('rm -rvf '.$tmpPath.'*');
+    doCmd('rm -rvf /home/localadm/deploys/git/*');
     foreach ($outputs as $value) {
         $pathCopy = getDir($tmpPath.$value);
-        exec('test -d "'.$pathCopy.'" || mkdir -p "'.$pathCopy.'" && cp '.$value.' "'.$tmpPath.$value.'"');
+        doCmd('test -d "'.$pathCopy.'" || mkdir -p "'.$pathCopy.'" && cp '.$value.' "'.$tmpPath.$value.'"');
     }
     
     if(isset($args['export'])) {

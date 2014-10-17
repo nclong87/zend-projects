@@ -4,7 +4,24 @@ define('DATE_YYYY_MM_DD', 'y-MM-dd');
 define('DS', DIRECTORY_SEPARATOR);
 define('PS', PATH_SEPARATOR);
 define('ROOT_DIR', dirname(__FILE__));
-set_include_path(ROOT_DIR.'/libs');
+//set_include_path(ROOT_DIR.'/libs');
+set_include_path(implode(PATH_SEPARATOR, array(
+    realpath(ROOT_DIR.'/libs'),
+    get_include_path(),
+)));
+function __autoload($class)
+{
+    //echo $class.PHP_EOL;
+    $parts = explode('\\', $class);
+    if(in_array($parts[0], array('Core','Db','Predis','Site','Tumblr','Eher','Guzzle','Symfony'))) {
+        $class = str_replace('\\', '/', $class);
+        require $class . '.php';
+    } 
+    //echo $class;
+    //$parts = explode('\\', $class);
+    //require end($parts) . '.php';
+}
+
 function debug($data,$exit = true) {
     print_r($data);
     if($exit) {
@@ -57,34 +74,39 @@ function getDir($fielPath) {
     return '';
 }
 
-function getDB() { 
-    $options_storage = array(
-        'adapter' => 'pdo_mysql',
-        'params' => array(
-            'host' => 'localhost',
-            'username' => 'root',
-            'password' => '',
-            'dbname' => 'test2',
-            'charset' => 'utf8'
-        )
-    );
-
-    //Set params
-    if(empty($options_storage['params']['driver_options'])){
-        $options_storage['params']['driver_options'] = array(
-            1002    =>  'SET NAMES \'utf8\'',
-            12      =>  0
+function getDB($dbName = 'test2') { 
+    static $storageMaster;
+    if(!isset($storageMaster)) {
+        include ROOT_DIR.'/libs/Zend/Db.php';
+        include ROOT_DIR.'/libs/Zend/Loader.php';
+        $options_storage = array(
+            'adapter' => 'pdo_mysql',
+            'params' => array(
+                'host' => 'localhost',
+                'username' => 'root',
+                'password' => '',
+                'dbname' => $dbName,
+                'charset' => 'utf8'
+            )
         );
-    }            
 
-    //Create object to Connect DB
-    $storageMaster = Zend_Db::factory($options_storage['adapter'], $options_storage['params']);
+        //Set params
+        if(empty($options_storage['params']['driver_options'])){
+            $options_storage['params']['driver_options'] = array(
+                1002    =>  'SET NAMES \'utf8\'',
+                12      =>  0
+            );
+        }            
 
-    //Changing the Fetch Mode
-    $storageMaster->setFetchMode(Zend_Db::FETCH_ASSOC);
+        //Create object to Connect DB
+        $storageMaster = Zend_Db::factory($options_storage['adapter'], $options_storage['params']);
 
-    // Create Adapter default is Db_Table
-    //Zend_Db_Table::setDefaultAdapter($storageMaster);
+        //Changing the Fetch Mode
+        $storageMaster->setFetchMode(Zend_Db::FETCH_ASSOC);
+
+        // Create Adapter default is Db_Table
+        //Zend_Db_Table::setDefaultAdapter($storageMaster);
+    }
     return $storageMaster;
 }
 
