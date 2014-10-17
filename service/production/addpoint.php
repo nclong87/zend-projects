@@ -4,10 +4,10 @@ $secretKey = '6NzKibziHL213d5F'; //key only for test
 $apiUrl = 'https://api.myplus.vn/request/addpoint';
 $post_data = array(
     'partner' => 'DS_CSM',
-    'request_payment_code' => 'TEST_201410',
+    'request_payment_code' => 'FA-PA140912008',
     'merchant_transaction' => 'TEST_'.date('YmdHis').rand(1, 10000),
     'zingid' => 'pluskt01',
-    'point_add' => '2',
+    'point_add' => '1',
     'more_info' => '',
     'client_ip' => '127.0.0.1',
 );
