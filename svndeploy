@@ -6,18 +6,17 @@ include 'functions.php';
  * and open the template in the editor.
  * svn log -r {2013-12-20}:{2014-12-01} | grep -B2 longnc
  */
-if(isset($argv[1]) && ($argv[1] == '--help' || $argv[1] == '--h')) {
+$args = parseArgs($argv);
+if(empty($args) || (isset($argv[1]) && ($argv[1] == '--help' || $argv[1] == '--h'))) {
     echo PHP_EOL;
     echo2('Description : deploy files change in revisions');
     echo2('Usage : php ~/tools/svndeploy [OPTIONS]');
     echo2('Examples :');
-    echo2('   svndeploy d=~/VNG/SandBox/sandbox  -> HEAD revision');
-    echo2('   svndeploy 15451,15453,15455 d=~/VNG/SandBox/sandbox');
+    echo2('   php ~/tools/svndeploy -d ~/VNG/CS/production/internal.api.myplus.vn/ -r 2530,2531');
     echo PHP_EOL;
     exit;
 }
 try {
-    $args = parseArgs($argv);
     $output = array();
     exec("svn info",$output);
     $workingPath = '';
