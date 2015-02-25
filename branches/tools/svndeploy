@@ -27,8 +27,8 @@ try {
         $pos = false;
         if(($pos = stripos($value,'Working Copy Root Path:')) !== false) {
             $workingPath = trim(str_replace('Working Copy Root Path:', '', $value));
-        } elseif(($pos = stripos($value,'URL:')) !== false) {
-            $URL = trim(str_replace('URL:', '', $value));
+        } elseif(($pos = stripos($value,'Repository Root:')) !== false) {
+            $URL = trim(str_replace('Repository Root:', '', $value));
         } if(($pos = stripos($value,'Revision:')) !== false) {
             $HEAD = Core_Number::parseInt(str_replace('Revision:', '', $value));
         }
@@ -71,6 +71,11 @@ try {
             $arr = split(' ', $file);
             if($arr[0] != 'D') {
                 $file = trim($arr[1]);
+                //$file = $URL.$file;
+                if(isset($changeFiles[$file]) && $changeFiles[$file] > $revision) {
+                    $revision = $changeFiles[$file];
+                }
+                $changeFiles[$file] = $revision;
                 $pos = false;
                 foreach ($folders as $folder) {
                     if(($pos = stripos($file,$folder)) !== false) {
@@ -78,11 +83,7 @@ try {
                     }
                 }
                 if($pos !== false) {
-                    $file = substr($file, $pos);
-                    if(isset($changeFiles[$file]) && $changeFiles[$file] > $revision) {
-                        $revision = $changeFiles[$file];
-                    }
-                    $changeFiles[$file] = $revision;
+                    
                 }
             }
             
@@ -110,7 +111,7 @@ try {
         $lastFolderInDest = $folders[0];
         foreach ($changeFiles as $file => $revision) {
             //exec("cp --parent {$file} {$backupFolder}");
-            $svnPath = $URL.'/'.$file;
+            $svnPath = $URL.$file;
             echo2('Deploying file '.$svnPath.':'.$revision.'...');
             $tmpPath = array();
             $folders = getFolders($file);
@@ -127,7 +128,7 @@ try {
             if(!is_dir($fileDir)) {
                 exec('mkdir '.$fileDir);
             }
-            ///echo2("svn export --force -r {$revision} {$svnPath} {$file}");
+            //echo2("svn export --force -r {$revision} {$svnPath} {$file}");
             exec("svn export --force -r {$revision} {$svnPath} {$file}");
         }
     }
