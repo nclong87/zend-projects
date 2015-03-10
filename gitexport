@@ -24,21 +24,27 @@ try {
     if(empty($args['m'])) {
         throw new Exception('Invalid params');
     }
-    $commit_id = $args['m'];
     $export = isset($args['export'])?$args['export']:'';
     if(empty($export)) {
         $export = '/tmp/gitdeploy';
     }
-    $cmd = 'git show '.$commit_id.' --name-only --oneline --minimal';
-    $outputs = doCmd($cmd);
     doCmd('rm -rvf '.$export.'*');
     doCmd('mkdir '.$export);
-    foreach ($outputs as $value) {
-        if(is_file($value)) {
-            $pathCopy = getDir($export.'/'.$value);
-            doCmd('test -d "'.$pathCopy.'" || mkdir -p "'.$pathCopy.'" && cp '.$value.' "'.$pathCopy.'"');
+    
+    $commits = explode(',', $args['m']);
+    
+    foreach ($commits as $commit_id) {
+        $cmd = 'git show '.$commit_id.' --name-only --oneline --minimal';
+        $outputs = doCmd($cmd);
+
+        foreach ($outputs as $value) {
+            if(is_file($value)) {
+                $pathCopy = getDir($export.'/'.$value);
+                doCmd('test -d "'.$pathCopy.'" || mkdir -p "'.$pathCopy.'" && cp '.$value.' "'.$pathCopy.'"');
+            }
         }
     }
+    
     echo PHP_EOL;
     echo PHP_EOL;
     echo PHP_EOL;
