@@ -12,7 +12,7 @@ if(isset($argv[1]) && ($argv[1] == '--help' || $argv[1] == '--h')) {
     echo2('Description : view log');
     echo2('Usage : php ~/tools/gitlog [OPTIONS]');
     echo2('Examples :');
-    echo2('   gitlog');
+    echo2('   gitlog -limit 10 -m "Fix bug"');
     echo PHP_EOL;
     exit;
 }
@@ -21,13 +21,28 @@ try {
     $current = new Zend_Date();
     $args = parseArgs($argv);
     $maxCount = isset($args['limit'])?$args['limit']:10;
+    $grep = isset($args['m'])?$args['m']:'';
+    
     $cmd = "git log --oneline --max-count=".$maxCount;
+    if(!empty($grep)) {
+        $cmd.= ' --grep='.$grep;
+    }
     echo2('Command: '.$cmd);
     exec($cmd,$outputs);
     echo2('Action: View logs');
+    $commits = array();
     foreach ($outputs as $value) {
+        $tmp = explode(' ', $value);
+        if(isset($tmp[0])) {
+            $commits[] = $tmp[0];
+        }
         echo2('   '.$value);
     }
+    $commits = array_reverse($commits);
+    echo2('Commits : '. join(',', $commits));
+    echo PHP_EOL;
+    echo2('------------------------------------------------------------------------');
+    echo 'Done'.PHP_EOL;
 } catch (Exception $exc) {
     echo2('Error : '.$exc->getMessage());
     //echo $exc->getTraceAsString();
